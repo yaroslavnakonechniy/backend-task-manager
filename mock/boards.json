@@ -1,0 +1,12 @@
+[{
+  "id": "d60275d0-b457-4531-85f9-8a98316b3433",
+  "name": "Alex's board #1",
+  "description": "Lorem ipsum dolor sit amet consectetur adipisicing elit. Porro, placeat!",
+  "authorId": "37d42238-a84d-47c4-8030-e3d0e91d43de"
+},
+{
+  "id": "b323afc7-9da4-43df-8ffb-732def134636",
+  "name": "Alex's board #2 ",
+  "description": "Lorem ipsum dolor, sit amet consectetur adipisicing elit. Tenetur illum eveniet quasi ex. Esse, tenetur id?",
+  "authorId": "37d42238-a84d-47c4-8030-e3d0e91d43de"
+}]
