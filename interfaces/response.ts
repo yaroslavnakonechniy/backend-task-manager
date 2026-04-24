@@ -1,4 +1,4 @@
-//import { ErrorCodes } from "./errors";
+import { ErrorCodes } from "./errors";
 
 export enum StatusCodes {
   SUCCESS = 200,
@@ -19,11 +19,15 @@ export interface ISuccessResponse<T> {
   data: T;
 }
 
-/* export interface IErrorResponse {
+export interface IErrorResponse {
   error: {
     code: ErrorCodes;
     message: string;
     details?: Array<{ field: string; message: string }>;
   };
 }
- */
+
+export interface ApiResponse<T> {
+  data?: ISuccessResponse<T>;
+  error?: IErrorResponse;
+}
