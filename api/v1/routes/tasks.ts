@@ -1,15 +1,15 @@
 import { Request, Router, type Response, type NextFunction } from 'express';
-import { type ExtendedRequest } from '../../../interfaces/index';
-import TASKS from '../../../mock/task.json' assert { type: 'json' };
+import { type IExtendedRequest } from '../../../interfaces/index';
+import TASKS from '../../../mock/task.json' with { type: 'json' };
 
 const router = Router();
 
-router.get('/', (req: ExtendedRequest, res: Response, next: NextFunction) => {
+router.get('/', (req: IExtendedRequest, res: Response, next: NextFunction) => {
     req.log?.info('Tasks accesed!');
     res.status(200).json(TASKS);
 });
 
-router.get('/:taskId', (req: ExtendedRequest & Request, res: Response, next: NextFunction) => {
+router.get('/:taskId', (req: IExtendedRequest & Request, res: Response, next: NextFunction) => {
     const { taskId } = req.params;
 
     const task = TASKS.find(t => t.id === taskId);
