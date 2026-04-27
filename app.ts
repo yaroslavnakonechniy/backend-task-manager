@@ -1,96 +1,60 @@
+import { fileURLToPath } from 'url';
+import { dirname } from 'path';
 import path from 'node:path';
-import { fileURLToPath } from 'node:url';
-import fs from 'node:fs';
-import crypto from 'node:crypto';
-import express, { type Request, type Response, type NextFunction } from 'express';
-import multer from 'multer';
+import express, { type Application, type Request, type Response, type NextFunction } from 'express';
 import { router as apiV1 } from './api/v1/routes';
-import { createLogger, currentUser, logTimestamp, throwError } from './middlewares';
+import { logger, currentUser } from './middlewares';
+import { BaseError, NotFoundError } from './common/errors';
 
-import type { ExtendedRequest } from './interfaces';
+import { ErrorCodes, StatusCodes, type IApp, type IExtendedRequest } from './interfaces';
 
 const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
+const __dirname = dirname(__filename);
 
-//const staticPath = path.join(__dirname, '..' ,'public');
-const logsPath = path.join(__dirname, 'logs');
-/* const filesPath = path.join(__dirname, 'uploads');
+export const createApp = ({ loggerInstance }: IApp): Application => {
+  const staticPath = path.join(__dirname, '..' ,'public');
 
-if (!fs.existsSync(filesPath)) {
-    fs.mkdirSync(filesPath, { recursive: true });
-    console.log('✅ Directory created:', filesPath);
-} */
+  const app = express();
 
-// const storage = multer.diskStorage({
-//   destination(req, file, cb) {
-//     cb(null, filesPath)
-//   },
-//   filename(req, file, cb) {
-//     console.log('File received:', file);
-//     const uniqueSuffix = crypto.randomBytes(8).toString('hex');
-//     cb(null, `${uniqueSuffix}-${file.originalname}`)
-//   },
-// });
+  app.use('/static', express.static(staticPath));
+  app.use(express.json());
+  app.use(logger(loggerInstance));
+  app.use(currentUser);
 
-if (!fs.existsSync(logsPath)) {
-    fs.mkdirSync(logsPath, { recursive: true });
-    console.log('📁 Logs directory created:', logsPath);
-}
+  app.get('/', (req: IExtendedRequest, res: Response) => {
+    res.status(200).json({ message: 'Welcome to the Tasks Manager API' });
+  });
+  app.use('/api/v1', apiV1);
 
-const app = express();
-// const upload = multer({ storage });
+  app.use((req: IExtendedRequest & Request, res: Response, next: NextFunction) => {
+    next(new NotFoundError(`Route ${req.method} ${req.path} not found`));
+  });
 
-app.get(
-  '/middleware-test',
-  (req: ExtendedRequest, res: Response, next: NextFunction) => {
-    console.log('First middleware');
+  app.use((error: Error, req: IExtendedRequest, res: Response, next: NextFunction) => {
+    const {
+      message = 'Something went wrong',
+      ...restArgs
+    } = error;
 
-    next(); 
-  },
-  (req: ExtendedRequest, res: Response, next: NextFunction) => {
-    console.log('Second middleware');
+    req.log?.error(`${message}`, restArgs);
 
-    next(); 
-  },
-  (req: ExtendedRequest, res: Response, next: NextFunction) => {
-    console.log('Third middleware');
+    if (error instanceof BaseError) {
+      res.status(error.statusCode).json({
+        data: {},
+        error: error.serialize(),
+      });
+    
+      return;
+    }
 
-    res.send('Hello from middleware test');
-  }
-);
+    res.status(StatusCodes.COMMON_ERROR).json({
+      data: {},
+      error: { 
+        code: ErrorCodes.COMMON_ERROR,
+        message
+      }
+    });
+  });
 
-// app.post(
-//   "/upload",
-//   upload.single("file"),
-//   (req: ExtendedRequest, res: Response, next: NextFunction) => {
-//     console.log('File uploaded:', req.file);
-//     console.log('File uploaded:', req.body.description);
-//     res.json({ message: "Successfully uploaded file" });
-//   });
-
-app.use(express.json());
-//app.use('/static', express.static(staticPath));
-
-app.use(createLogger(logsPath)); // Use the logger middleware for all routes
-app.use(logTimestamp);
-// app.use(throwError);
-app.use(currentUser);
-
-app.get('/', throwError, (req: ExtendedRequest, res: Response, next: NextFunction) => {
-  res.send('Welcome to Tasks Manager API');
-});
-
-app.use('/api/v1', apiV1);
-
-app.use((req: ExtendedRequest, res: Response, next: NextFunction) => {
-  res.status(404).json({ message: 'Not found' });
-});
-
-app.use((error: Error, req: ExtendedRequest, res: Response, next: NextFunction) => {
-  console.error(error.stack);
-  req.log?.error(`Error: ${error.message}`, error);
-
-  res.status(500).json({ message: error.message || 'Something went wrong' });
-});
-
-export { app }
+  return app;
+};

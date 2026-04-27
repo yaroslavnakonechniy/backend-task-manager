@@ -1,7 +1,9 @@
 import path from "node:path";
-import winston from "winston";
+import winston, { type Logger } from "winston";
 
-export const createLogger = (logDir: string) => {
+let loggerInstance: Logger;
+
+const createLogger = (logDir: string): Logger => {
   return winston.createLogger({
     defaultMeta: { service: 'tasks-manager' },
     level: 'info',
@@ -18,3 +20,23 @@ export const createLogger = (logDir: string) => {
     ],
   });
 };
+
+const initLogger = (logDir: string): Logger => {
+  if (loggerInstance) {
+    return loggerInstance;
+  }
+
+  loggerInstance = createLogger(logDir);
+
+  return loggerInstance;
+};
+
+const getLogger = (): Logger => {
+  if (!loggerInstance) {
+    throw new Error('Logger instance is not created yet');
+  }
+
+  return loggerInstance;
+};
+
+export { initLogger, getLogger };

@@ -1,7 +1,7 @@
 import { Router, type Request, type Response, type NextFunction } from 'express';
-import { type ExtendedRequest } from '../../../interfaces/index';
-import BOARDS from '../../../mock/boards.json' assert { type: 'json' };
-import TASKS from '../../../mock/task.json' assert { type: 'json' };
+import { type IExtendedRequest } from '../../../interfaces/index';
+import BOARDS from '../../../mock/boards.json' with { type: 'json' };
+import TASKS from '../../../mock/task.json' with { type: 'json' };
 
 const router = Router();
 
@@ -9,7 +9,7 @@ router.get('/', (req: Request, res: Response, next: NextFunction) => {
     res.status(200).json(BOARDS);
 });
 
-router.get('/:boardId', (req: ExtendedRequest & Request, res: Response, next: NextFunction) => {
+router.get('/:boardId', (req: IExtendedRequest & Request, res: Response, next: NextFunction) => {
     const { boardId } = req.params;
 
     const board = BOARDS.find(board => String(board.id) === boardId);
@@ -24,7 +24,7 @@ router.get('/:boardId', (req: ExtendedRequest & Request, res: Response, next: Ne
 
 });
 
-router.get('/:boardId/tasks', (req: ExtendedRequest & Request, res: Response, next: NextFunction) => {
+router.get('/:boardId/tasks', (req: IExtendedRequest & Request, res: Response, next: NextFunction) => {
     const { boardId } = req.params;
     const userId = req.user?.id;
 
