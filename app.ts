@@ -2,6 +2,8 @@ import { fileURLToPath } from 'url';
 import { dirname } from 'path';
 import path from 'node:path';
 import express, { type Application, type Request, type Response, type NextFunction } from 'express';
+import session from 'express-session';
+import passport from 'passport';
 import { router as apiV1 } from './api/v1/routes';
 import { logger, currentUser } from './middlewares';
 import { BaseError, NotFoundError } from './common/errors';
@@ -18,6 +20,21 @@ export const createApp = ({ loggerInstance }: IApp): Application => {
 
   app.use('/static', express.static(staticPath));
   app.use(express.json());
+
+  app.use(
+    session({
+      secret: 'super-secret-key',
+      resave: false,
+      saveUninitialized: false,
+      cookie: {
+        httpOnly: true,
+        secure: false
+      }
+    })
+  );
+
+  app.use(passport.initialize());
+  app.use(passport.session());
   app.use(logger(loggerInstance));
   app.use(currentUser);
 

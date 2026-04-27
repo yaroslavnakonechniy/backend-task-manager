@@ -5,6 +5,9 @@ import dotenv from 'dotenv';
 import { createApp } from './app';
 import { initLogger } from './modules/logger';
 import { connect } from './repositories/json-db/base';
+import { setupPassport } from './config/passport';
+import { AuthService } from './services';
+import { AuthRepository } from './repositories/json-db';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
@@ -26,12 +29,14 @@ try {
     throw new Error('DB_URI or DB_PORT is not defined in environment variables');
   }
 
-  // Connect to the JSON Server database and start the server
   connect(`${DB_URI}:${DB_PORT}`)
     .then(() => {
       // Initialize logger and create the application instance
       const logsPath = path.join(__dirname, 'logs');
       const logger = initLogger(logsPath);
+      const authRepositoryInstance = new AuthRepository();
+      const authService = new AuthService({ repository: authRepositoryInstance });
+      setupPassport(authService);
       const app = createApp({ loggerInstance: logger });
 
       logger.info('Connected to JSON Server database');
