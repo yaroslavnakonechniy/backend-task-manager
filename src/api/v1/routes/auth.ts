@@ -1,6 +1,7 @@
-import { Response, NextFunction, Router } from 'express';
+import { Router } from 'express';
 import { body } from 'express-validator';
 
+import { authVerification } from '../../../middlewares';
 import { AuthRepository } from '../../../repositories/json-db';
 import { AuthService } from '../../../services';
 import { AuthController } from '../controllers/auth';
@@ -11,6 +12,9 @@ export const createAuthRouter = (): Router => {
   const repository = new AuthRepository();
   const service = new AuthService({ repository });
   const controller = new AuthController({ authService: service });
+
+  // Protected route to get current user data
+  router.get('/me', authVerification, controller.getMe.bind(controller));
 
   router.post(
     '/sign-up',

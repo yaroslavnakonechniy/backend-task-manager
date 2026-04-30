@@ -16,3 +16,9 @@ npm install --save-dev @types/cookie-parser
 npm install --save-dev typescript
 npx tsc --init
 npm install --save-dev @types/passport @types/passport-local
+npm i cors
+npm install --save-dev @types/cors
+npm i helmet
+
+//npm i mongo
+//npm i --save-dev @types/mongo 
