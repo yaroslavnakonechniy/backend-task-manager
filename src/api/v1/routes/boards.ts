@@ -1,9 +1,9 @@
 import { Router } from 'express';
 import { body } from 'express-validator';
 
-import { BoardRepository, TaskRepository } from '../../../repositories/json-db';
+import { BoardRepository, TaskRepository } from '../../../repositories//mongo-db';
 import { BoardService } from '../../../services';
-import { BoardController } from '../controllers/boards';
+import { BoardController } from '../controllers';
 
 export const createBoardRouter = (): Router => {
   const router = Router();
