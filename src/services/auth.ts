@@ -5,17 +5,34 @@ import jwt from "jsonwebtoken";
 import { Password } from "../modules/Password";
 import { InvalidCredentialsError, NotFoundError, ValidationError } from "../common/errors";
 
-import type { IExtendedRequest, IRepository, IUser, UserDataReturn } from "../interfaces";
-
-type ConstructorParams = {
-  repository: IRepository;
-};
+import type { ConstructorParams, IExtendedRequest, IRepository, IUser, UserDataReturn } from "../interfaces";
 
 export class AuthService {
   private readonly repository: IRepository;
 
   constructor({ repository }: ConstructorParams) {
     this.repository = repository;
+  }
+
+  public async getMe(request: IExtendedRequest): Promise<UserDataReturn> {
+    const userId = request.user?.id;
+
+    if (!userId) {
+      throw new NotFoundError('User not found');
+    }
+
+    const user = await this.repository.findById<IUser>(userId);
+
+    if (!user) {
+      throw new NotFoundError('User not found');
+    }
+
+    return {
+      id: user.id,
+      name: user.name,
+      email: user.email,
+      createdAt: user.createdAt
+    };
   }
 
   public async signUp(request: IExtendedRequest, { name, email, password }: Pick<IUser, 'name' | 'email' | 'password'>): Promise<UserDataReturn> {
@@ -57,7 +74,7 @@ export class AuthService {
 
     return {
       ...userData,
-      token,
+      token: token,
     };
   }
 
@@ -94,16 +111,18 @@ export class AuthService {
     
     return {
       ...userData,
-      token,
+      token: token,
     };
   }
 
-  public async validateUser(email: string, password: string): Promise<Pick<IUser, 'id'> | null> {
+  public async validateUser(email: string, password: string): Promise<any> {
     const [user] = await this.repository.findByQuery<IUser>({ email });
 
-    if (user && await Password.verify(user.password, password)) {
-      return { id: user.id }; // Повертаємо лише те, що потрібно для Passport
+    if (!user || !(await Password.verify(user.password, password))) {
+      return null;
     }
-    return null;
+
+    const { password: _, ...userWithoutPassword } = user;
+    return userWithoutPassword;
   }
 }

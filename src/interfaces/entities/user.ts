@@ -8,4 +8,4 @@ export interface IUser {
 }
 
 export type UserDataUpdate = Partial<Omit<IUser, 'id'>>;
-export type UserDataReturn = Omit<IUser, 'password'> & { token: string };
+export type UserDataReturn = Omit<IUser, 'password'> & { token?: string };

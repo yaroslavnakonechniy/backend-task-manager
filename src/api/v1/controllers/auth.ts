@@ -1,7 +1,7 @@
+import type { NextFunction, Response } from 'express';
 import { AuthService } from "../../../services";
 
 import { StatusCodes, type IExtendedRequest } from '../../../interfaces';
-import type { NextFunction, Response } from 'express';
 
 type ConstructorParams = {
   authService: AuthService;
@@ -12,6 +12,19 @@ export class AuthController {
 
   constructor({ authService }: ConstructorParams) {
     this.authService = authService;
+  }
+
+  public async getMe(req: IExtendedRequest, res: Response, next: NextFunction) {
+    return this.authService
+      .getMe(req)
+      .then(user => {
+        res.status(StatusCodes.SUCCESS).json({ data: user });
+      })
+      .catch(error => {
+        req?.log?.error(`Failed to fetch user data`, { error });
+
+        next(error);
+      });
   }
 
   async signUp(req: IExtendedRequest, res: Response, next: NextFunction) {
@@ -54,6 +67,11 @@ export class AuthController {
 
   async signOut(req: IExtendedRequest, res: Response) {
     // Implement sign out logic if needed (e.g., invalidate tokens, clear cookies)
-    res.status(200).json({ message: 'Sign out successful' });
+    req.session = null;
+
+    res.status(StatusCodes.SUCCESS).json({
+      data: {},
+      error: {}
+    });
   }
 }
