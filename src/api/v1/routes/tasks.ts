@@ -1,9 +1,9 @@
 import { Router } from 'express';
 import { body, query } from 'express-validator';
 
-import { BoardRepository, TaskRepository } from '../../../repositories/json-db';
+import { BoardRepository, TaskRepository } from '../../../repositories//mongo-db';
 import { TaskService } from '../../../services';
-import { TaskController } from '../controllers/tasks';
+import { TaskController } from '../controllers';
 
 export const createTaskRouter = (): Router => {
   const router = Router();

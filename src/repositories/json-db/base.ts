@@ -44,6 +44,11 @@ export abstract class JsonServerRepository implements IRepository {
       .then((response: AxiosResponse<R>) => response.data);
   }
 
+  public async createMany<T, R>(data: T[]): Promise<R[]> {
+    // Implementation for creating multiple records
+    return [];
+  }
+
   public async update<T, R>(id: string, data: T): Promise<R> {
     return this.db.patch(`/${this.resource}/${id}`, data)
       .then((response: AxiosResponse<R>) => response.data);

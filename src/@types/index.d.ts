@@ -1,10 +1,10 @@
-import 'cookie-session'; // Тільки цей імпорт
+import 'cookie-session';
 
 declare global {
   namespace Express {
     interface Request {
       log?: any;
-      session: CookieSessionInterfaces.CookieSessionObject | null; // Використовуємо типи cookie-session
+      session: CookieSessionInterfaces.CookieSessionObject | null;
     }
     interface User {
       id: string;
