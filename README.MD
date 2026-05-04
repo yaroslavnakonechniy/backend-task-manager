@@ -21,3 +21,7 @@ npm install --save-dev @types/cors
 npm i helmet
 npm i mongo
 npm i --save-dev @types/mongo 
+
+node dist/migrations/initial_users_30_04_2026_1777551050777.js
+node dist/migrations/initial_boards_30_04_2026_1777551050777.js
+node dist/migrations/initial_tasks_30_04_2026_1777551050777.js
