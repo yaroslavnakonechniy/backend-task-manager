@@ -19,7 +19,6 @@ export class BoardService {
     this.taskRepository = taskRepository;
   }
 
-  // api/v1/boards/:boardId/tasks
   public async getBoardTasks(request: IExtendedRequest) {
     const { boardId } = request.params!;
 
@@ -137,5 +136,41 @@ export class BoardService {
     }
 
     return this.boardRepository.delete(id);
+  }
+
+  public async streamBoardTasks(request: IExtendedRequest, callback: (task: ITask) => void) {
+    const { boardId } = request.params!;
+
+    const board = await this.boardRepository.findById<IBoard>(boardId as string);
+
+    if (!board) {
+      throw new NotFoundError('Board not found');
+    }
+
+    if (board.authorId !== request.user!.id) {
+      throw new ForbiddenError('No access');
+    }
+
+    if (!this.taskRepository.findCursor) {
+      throw new Error('Cursor not supported');
+    }
+
+
+    await this.taskRepository.findCursor<ITask>(
+      {
+        authorId: request.user!.id,
+        boardId: boardId,
+      },
+      async (task) => {
+        console.log('Processing:', task.id);
+
+        //await new Promise(r => setTimeout(r, 500)); // затримка, для перевірки роботи курсора
+
+        callback({
+          ...task,
+          workflow: transformWorkflow(task.workflow as WorkflowCode) as any,
+        });
+      }
+    );
   }
 }

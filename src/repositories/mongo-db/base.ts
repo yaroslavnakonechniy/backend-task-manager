@@ -76,6 +76,18 @@ export abstract class MongoDbRepository implements IRepository {
 
     return collection.deleteOne({ id });
   }
+
+  public async findCursor<T>(
+    query: Record<string, any>,
+    callback: (doc: T) => Promise<void> | void
+  ): Promise<void> {
+    const collection = this.db.collection(this.resource);
+    const cursor = collection.find(query, { projection: { _id: 0 } });
+
+    for await (const doc of cursor) {
+      await callback(doc as T);
+    }
+  }
 }
 
 export const connect = async (options: MongoDbOptions): Promise<MongoClient> => {
