@@ -21,7 +21,7 @@ export const createTaskRouter = (): Router => {
         .trim()
         .withMessage('boardId query parameter is required')
     ],
-    controller.getAllTasks.bind(controller)
+    controller.streamTasks.bind(controller)
   );
 
   router.get(

@@ -28,28 +28,28 @@ export class BoardController {
   } */
 
   public async streamBoardTasks(req: IExtendedRequest, res: Response, next: NextFunction) {
-  try {
-    const { boardId } = req.params;
-    
-    res.setHeader('Content-Type', 'application/x-ndjson');
-    res.setHeader('Transfer-Encoding', 'chunked');
+    try {
+      const { boardId } = req.params;
+      
+      res.setHeader('Content-Type', 'application/x-ndjson');
+      res.setHeader('Transfer-Encoding', 'chunked');
 
-    await this.boardService.streamBoardTasks(req, (task) => {
-      res.write(JSON.stringify(task) + '\n');
-    });
+      await this.boardService.streamBoardTasks(req, (task) => {
+        res.write(JSON.stringify(task) + '\n');
+      });
 
-    res.end();
-  } catch (error) {
-    req?.log?.error(`Error streaming tasks for board ${req.params.boardId}`, { error });
-    
-    if (!res.headersSent) {
-      return next(error);
+      res.end();
+    } catch (error) {
+      req?.log?.error(`Error streaming tasks for board ${req.params.boardId}`, { error });
+      
+      if (!res.headersSent) {
+        return next(error);
+      }
+      
+      res.write(JSON.stringify({ error: (error as Error).message }));
+      res.end();
     }
-    
-    res.write(JSON.stringify({ error: (error as Error).message }));
-    res.end();
   }
-}
 
   public async getBoards(req: IExtendedRequest, res: Response, next: NextFunction) {
     try {
