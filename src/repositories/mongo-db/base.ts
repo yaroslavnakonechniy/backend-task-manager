@@ -88,6 +88,12 @@ export abstract class MongoDbRepository implements IRepository {
       await callback(doc as T);
     }
   }
+
+  public async aggregate<T>(pipeline: object[]): Promise<T[]> {
+    const collection = this.db.collection(this.resource);
+
+    return collection.aggregate(pipeline).toArray() as Promise<T[]>;
+  }
 }
 
 export const connect = async (options: MongoDbOptions): Promise<MongoClient> => {

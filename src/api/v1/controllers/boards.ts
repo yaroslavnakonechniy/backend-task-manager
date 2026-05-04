@@ -117,4 +117,16 @@ export class BoardController {
       next(error);
     }
   }
+
+  public async getBoardStats(req: IExtendedRequest, res: Response, next: NextFunction) {
+    try {
+      // Викликаємо сервіс (цей метод ми додамо наступним кроком)
+      const stats = await this.boardService.getBoardsStatistics(req);
+
+      res.status(StatusCodes.SUCCESS).json({ data: stats });
+    } catch (error) {
+      req?.log?.error(`Failed to fetch board statistics`, { error });
+      next(error);
+    }
+  }
 }

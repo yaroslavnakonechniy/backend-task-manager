@@ -13,6 +13,8 @@ export const createBoardRouter = (): Router => {
   const service = new BoardService({ boardRepository, taskRepository });
   const controller = new BoardController({ boardService: service });
 
+  router.get('/statistics', controller.getBoardStats.bind(controller));
+
   router.get('/', controller.getBoards.bind(controller));
 
   //router.get('/:boardId/tasks', controller.getBoardTasks.bind(controller));
