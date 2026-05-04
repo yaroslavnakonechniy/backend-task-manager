@@ -25,3 +25,6 @@ npm i --save-dev @types/mongo
 node dist/migrations/initial_users_30_04_2026_1777551050777.js
 node dist/migrations/initial_boards_30_04_2026_1777551050777.js
 node dist/migrations/initial_tasks_30_04_2026_1777551050777.js
+
+Агрегація повертає кількість задач на борді, та кількість виконаних задач на цьому борді
+Для перевірки агригації Відкрийте браузе або ПОСТМЕН і зробіть запит:http://localhost:3000/api/v1/boards/statistics

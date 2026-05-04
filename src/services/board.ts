@@ -5,13 +5,15 @@ import { ForbiddenError, NotFoundError, ValidationError } from "../common/errors
 
 import type { IExtendedRequest, IRepository, ITask, WorkflowCode } from "../interfaces";
 import type { IBoard, BoardDataUpdate, BoardDataCreate } from "../interfaces/entities/board";
+import { BoardRepository } from '../repositories/mongo-db/board'; 
 
 type ConstructorParams = {
-  boardRepository: IRepository;
+  boardRepository: BoardRepository;
   taskRepository: IRepository;
 };
+
 export class BoardService {
-  private boardRepository: IRepository;
+  private boardRepository: BoardRepository;
   private taskRepository: IRepository;
 
   constructor({ boardRepository, taskRepository }: ConstructorParams) {
@@ -172,5 +174,18 @@ export class BoardService {
         });
       }
     );
+  }
+
+  public async getBoardsStatistics(request: IExtendedRequest) {
+  
+    const userId = request.user!.id;
+
+    const stats = await this.boardRepository.getBoardsStatistics(userId);
+
+    if (!stats) {
+      throw new NotFoundError('Statistics not found');
+    }
+
+    return stats;
   }
 }
