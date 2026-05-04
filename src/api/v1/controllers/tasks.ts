@@ -15,7 +15,7 @@ export class TaskController {
 
   // Implement controller methods for handling task-related requests here
 
-  public async getAllTasks(req: IExtendedRequest, res: Response, next: NextFunction) {
+/*   public async getAllTasks(req: IExtendedRequest, res: Response, next: NextFunction) {
     try {
       const tasks = await this.taskService.getAllTasks(req);
 
@@ -24,6 +24,29 @@ export class TaskController {
       req?.log?.error(`Failed to fetch tasks`, { error });
 
       next(error);
+    }
+  } */
+
+  public async streamTasks(req: IExtendedRequest, res: Response, next: NextFunction) {
+    try {
+      const { boardId } = req.query;
+
+      res.setHeader('Content-Type', 'application/x-ndjson');
+      res.setHeader('Transfer-Encoding', 'chunked');
+
+      // Викликаємо метод сервісу (ми його створимо нижче)
+      await this.taskService.streamTasks(req, (task) => {
+        res.write(JSON.stringify(task) + '\n');
+      }, boardId as string);
+
+      res.end();
+    } catch (error) {
+      if (!res.headersSent) {
+        next(error);
+      } else {
+        res.write(JSON.stringify({ error: 'Stream interrupted' }));
+        res.end();
+      }
     }
   }
 

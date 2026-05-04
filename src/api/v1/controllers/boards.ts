@@ -15,7 +15,7 @@ export class BoardController {
     this.boardService = boardService;
   }
 
-  public async getBoardTasks(req: IExtendedRequest, res: Response, next: NextFunction) {
+/*   public async getBoardTasks(req: IExtendedRequest, res: Response, next: NextFunction) {
     try {
       const tasks = await this.boardService.getBoardTasks(req);
 
@@ -24,6 +24,30 @@ export class BoardController {
       req?.log?.error(`Failed to fetch tasks for board with id ${req.params.boardId}`, { error });
 
       next(error);
+    }
+  } */
+
+  public async streamBoardTasks(req: IExtendedRequest, res: Response, next: NextFunction) {
+    try {
+      const { boardId } = req.params;
+      
+      res.setHeader('Content-Type', 'application/x-ndjson');
+      res.setHeader('Transfer-Encoding', 'chunked');
+
+      await this.boardService.streamBoardTasks(req, (task) => {
+        res.write(JSON.stringify(task) + '\n');
+      });
+
+      res.end();
+    } catch (error) {
+      req?.log?.error(`Error streaming tasks for board ${req.params.boardId}`, { error });
+      
+      if (!res.headersSent) {
+        return next(error);
+      }
+      
+      res.write(JSON.stringify({ error: (error as Error).message }));
+      res.end();
     }
   }
 

@@ -21,7 +21,7 @@ export class TaskService {
   }
 
   // api/v1/tasks?boardId=:boardId
-  public async getAllTasks(request: IExtendedRequest) {
+  /* public async getAllTasks(request: IExtendedRequest) {
     const { boardId = '' } = request.query!;
 
     const result = validationResult(request);
@@ -53,6 +53,25 @@ export class TaskService {
       ...task,
       workflow: transformWorkflow(task.workflow as WorkflowCode),
     }));
+  } */
+
+  public async streamTasks(request: IExtendedRequest, callback: (task: ITask) => void, boardId: string) {
+    if (!this.taskRepository.findCursor) {
+      throw new Error('Cursor not supported');
+    }
+
+    await this.taskRepository.findCursor<ITask>(
+      { 
+        authorId: request.user!.id,
+        boardId: boardId // Фільтруємо за конкретною дошкою
+      },
+      async (task) => {
+        callback({
+          ...task,
+          workflow: transformWorkflow(task.workflow as WorkflowCode) as any,
+        });
+      }
+    );
   }
 
   public async getTaskById(req: IExtendedRequest, { id }: { id: string }) {

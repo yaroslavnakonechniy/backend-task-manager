@@ -15,7 +15,8 @@ export const createBoardRouter = (): Router => {
 
   router.get('/', controller.getBoards.bind(controller));
 
-  router.get('/:boardId/tasks', controller.getBoardTasks.bind(controller));
+  //router.get('/:boardId/tasks', controller.getBoardTasks.bind(controller));
+  router.get('/:boardId/tasks', controller.streamBoardTasks.bind(controller));
 
   router.get('/:boardId', controller.getBoardById.bind(controller));
 
