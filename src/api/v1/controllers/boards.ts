@@ -33,9 +33,17 @@ export class BoardController {
       
       res.setHeader('Content-Type', 'application/x-ndjson');
       res.setHeader('Transfer-Encoding', 'chunked');
+      res.setHeader('Cache-Control', 'no-cache');
+      res.setHeader('Connection', 'keep-alive');
+      res.setHeader('X-Accel-Buffering', 'no');
 
+      res.flushHeaders();
+      res.write('\n');
+      
       await this.boardService.streamBoardTasks(req, (task) => {
         res.write(JSON.stringify(task) + '\n');
+
+        (res as any).flush?.();
       });
 
       res.end();
