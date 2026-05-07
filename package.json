@@ -4,16 +4,15 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "start": "node dist/index.js",
-    "start:inspect": "node --inspect dist/index.js",
-    "start:db": "json-server ./public/db.json --port 27568",
-    "build": "tsc"
+    "dev": "tsx watch src/index.ts",
+    "build": "tsc",
+    "start": "node dist/index.js"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "axios": "^1.15.2",
+    "axios": "^1.16.0",
     "cookie": "^1.1.1",
     "cookie-session": "^2.1.1",
     "cors": "^2.8.6",

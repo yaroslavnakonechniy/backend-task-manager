@@ -37,7 +37,7 @@ export const createApp = ({ loggerInstance }: IApp): Application => {
   app.use(logger(loggerInstance));
 
   app.get('/', (req: IExtendedRequest, res: Response) => {
-    res.status(200).json({ message: 'Welcome to the Tasks Manager API' });
+    res.status(200).json({ message: 'Welcome to the Tasks Manager API, docker' });
   });
   app.use('/api/v1', apiV1);
 
