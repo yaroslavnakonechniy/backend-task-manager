@@ -19,8 +19,10 @@ npm install --save-dev @types/passport @types/passport-local
 npm i cors
 npm install --save-dev @types/cors
 npm i helmet
-npm i mongo
-npm i --save-dev @types/mongo 
+npm i mongodb
+npm i --save-dev @types/mongodb
+npm i mongoose
+
 
 node dist/migrations/initial_users_30_04_2026_1777551050777.js
 node dist/migrations/initial_boards_30_04_2026_1777551050777.js
