@@ -57,6 +57,13 @@ export abstract class JsonServerRepository implements IRepository {
   public async delete(id: string): Promise<void> {
     return this.db.delete(`/${this.resource}/${id}`);
   }
+
+  async findCursor<T>(
+    query: Record<string, unknown>,
+    callback: (doc: T) => Promise<void> | void
+  ): Promise<void> {
+    // 
+  }
 }
 
 export const connect = async (baseURL: string): Promise<AxiosInstance> => {

@@ -8,7 +8,7 @@ import { InvalidCredentialsError, NotFoundError, ValidationError } from "../comm
 import type { ConstructorParams, IExtendedRequest, IRepository, IUser, UserDataReturn } from "../interfaces";
 
 export class AuthService {
-  private readonly repository: IRepository;
+  private readonly repository: IRepository<IUser>;
 
   constructor({ repository }: ConstructorParams) {
     this.repository = repository;
@@ -21,7 +21,7 @@ export class AuthService {
       throw new NotFoundError('User not found');
     }
 
-    const user = await this.repository.findById<IUser>(userId);
+    const user = await this.repository.findById(userId);
 
     if (!user) {
       throw new NotFoundError('User not found');
@@ -31,7 +31,6 @@ export class AuthService {
       id: user.id,
       name: user.name,
       email: user.email,
-      createdAt: user.createdAt
     };
   }
 
@@ -42,7 +41,7 @@ export class AuthService {
       throw new ValidationError('Validation failed', result.array());
     }
 
-    const [existingUser] = await this.repository.findByQuery<UserDataReturn>({ email });
+    const [existingUser] = await this.repository.findByQuery({ email });
 
     if (existingUser) {
       throw new ValidationError('User with this email already exists');
@@ -55,10 +54,9 @@ export class AuthService {
       name,
       email,
       password: hashedPassword,
-      createdAt: new Date().toISOString(),
     };
 
-    const createdUser = await this.repository.create<IUser, IUser>(newUser);
+    const createdUser = await this.repository.create(newUser);
 
     const token = jwt.sign(
       { user: { id: newUser.id } },
@@ -72,10 +70,7 @@ export class AuthService {
 
     const { password: _, ...userData } = createdUser;
 
-    return {
-      ...userData,
-      token: token,
-    };
+    return userData;
   }
 
   public async signIn(request: IExtendedRequest, { email, password }: Pick<IUser, 'email' | 'password'>): Promise<UserDataReturn> {
@@ -85,7 +80,7 @@ export class AuthService {
       throw new ValidationError('Validation failed', result.array());
     }
 
-    const [existingUser] = await this.repository.findByQuery<IUser>({ email })
+    const [existingUser] = await this.repository.findByQuery({ email }) || [];
 
     if (!existingUser) {
       throw new NotFoundError('User not found');
@@ -109,14 +104,11 @@ export class AuthService {
 
     const { password: _ , ...userData } = existingUser;
     
-    return {
-      ...userData,
-      token: token,
-    };
+    return userData;
   }
 
   public async validateUser(email: string, password: string): Promise<any> {
-    const [user] = await this.repository.findByQuery<IUser>({ email });
+    const [user] = await this.repository.findByQuery({ email });
 
     if (!user || !(await Password.verify(user.password, password))) {
       return null;

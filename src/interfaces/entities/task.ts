@@ -1,3 +1,5 @@
+import { Types } from "mongoose";
+
 export interface ITask {
   id: string;
   title: string;
