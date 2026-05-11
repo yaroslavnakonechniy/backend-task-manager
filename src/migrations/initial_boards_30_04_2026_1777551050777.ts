@@ -5,7 +5,7 @@ import type { IBoard } from '../interfaces';
 
 import INITIAL_DATA from './initial-data/db.json';
 
-dotenv.config({ path: path.join(__dirname, '..', '..', '.env') });
+dotenv.config({ path: path.join(__dirname, '..', '..', '.env.test') });
 
 const { DB_URI, DB_USER, DB_PASSWORD, DB_NAME } = process.env;
 

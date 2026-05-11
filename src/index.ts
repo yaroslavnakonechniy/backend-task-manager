@@ -4,10 +4,9 @@ import path from 'node:path';
 import dotenv from 'dotenv';
 import { createApp } from './app';
 import { initLogger } from './modules/logger';
-// import { connect } from './repositories/json-db/base';
-import { connect } from './repositories/mongo-db';
+import { connect } from './repositories/mongoose';
 
-dotenv.config({ path: path.join(__dirname, '..', '.env') });
+dotenv.config({ path: path.join(__dirname, '..', '.env.test') });
 
 try {
   const { PORT, DB_URI, DB_PORT, DB_NAME, DB_USER, DB_PASSWORD, JWT_SECRET_KEY, COOKIE_SECRET_KEY, CLIENT_URLS } = process.env;

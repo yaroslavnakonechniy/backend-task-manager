@@ -22,7 +22,11 @@ npm i helmet
 npm i mongodb
 npm i --save-dev @types/mongodb
 npm i mongoose
-
+npm i jest
+npm i @types jest
+npm i ts-jest
+npm i supertest
+npm i --save-dev @types/supertest
 
 node dist/migrations/initial_users_30_04_2026_1777551050777.js
 node dist/migrations/initial_boards_30_04_2026_1777551050777.js

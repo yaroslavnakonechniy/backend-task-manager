@@ -60,7 +60,6 @@ export abstract class MongooseRepository<M extends { id: string }> implements IR
     return document as M;
   }
 
-
   public async delete(id: string): Promise<void> {
     await this.model
       .deleteOne({ id });
@@ -92,7 +91,7 @@ export const connect = async (options: DBOptions) => {
     .replace('{{user}}', encodeURIComponent(options.user))
     .replace('{{password}}', encodeURIComponent(options.password));
 
-  mongoose.connect(uri, {
+  await mongoose.connect(uri, {
     dbName: options.name,
   });
 };
@@ -107,4 +106,24 @@ export const getDB = () => {
 
 export const closeDB = async () => {
   await mongoose.connection.close();
+};
+
+export const cleanDB = async () => {
+  if (!mongoose.connection) {
+    throw new Error('Client not initialized. Please call connect() first.');
+  }
+
+  if (!mongoose.connection.db) {
+    throw new Error('Client not initialized. Please call connect() first.');
+  }
+
+  const collections = await mongoose.connection.db
+    .listCollections()
+    .toArray();
+
+  if (collections) {
+    for (const collection of collections) {
+      await mongoose.connection.db.collection(collection.name).deleteMany({});
+    }
+  }
 };
