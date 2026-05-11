@@ -65,6 +65,12 @@ export abstract class MongooseRepository<M extends { id: string }> implements IR
       .deleteOne({ id });
   }
 
+  public async deleteByQuery(query: Partial<M>): Promise<void> {
+    await this.model
+      .deleteMany(query);
+  }
+
+
   public async findCursor<T>(
     query: QueryFilter<M>,
     callback: (doc: T) => Promise<void> | void
