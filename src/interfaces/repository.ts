@@ -9,6 +9,7 @@ export interface IRepository<M extends { id: string; } = any> {
   update(id: string, data: Partial<M>): Promise<M>;
   delete(id: string): Promise<void>;
   findCursor<T>(query: Record<string, unknown>,callback: (doc: T) => Promise<void> | void): Promise<void>;
+  deleteByQuery(query: Partial<M>): Promise<void>;
 }
 
 export interface ITaskRepository extends IRepository<ITask> {

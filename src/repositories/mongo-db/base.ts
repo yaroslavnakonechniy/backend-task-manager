@@ -28,6 +28,17 @@ export abstract class MongoDbRepository implements IRepository {
 
     return client;
   }
+  
+  protected get collection() {
+    const dbInstance = this.db;
+
+    if (!dbInstance) {
+      throw new Error('Database not initialized. Please call connect() first.');
+    }
+
+    return dbInstance.collection(this.resource);
+  }
+
 
   public async findAll<T>(): Promise<T[]> {
     const collection = this.db.collection(this.resource);
@@ -76,6 +87,11 @@ export abstract class MongoDbRepository implements IRepository {
 
     return collection.deleteOne({ id });
   }
+
+  public async deleteByQuery(query: Record<string, string>): Promise<any> {
+    return this.collection.deleteMany(query);
+  }
+
 
   public async findCursor<T>(
     query: Record<string, any>,

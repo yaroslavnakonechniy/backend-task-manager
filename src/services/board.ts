@@ -221,6 +221,8 @@ export class BoardService {
       throw new ForbiddenError('You do not have permission to delete this board');
     }
 
-    return this.boardRepository.delete(id);
+    await this.boardRepository.delete(id);
+
+    return this.taskRepository.deleteByQuery({ boardId: board.id });
   }
 }

@@ -1,10 +1,10 @@
-import { type Response, type NextFunction } from 'express';
+import { type Request, type Response, type NextFunction } from 'express';
 import jwt from "jsonwebtoken";
 import { UnauthorizedError } from '../common/errors';
 
-import type { IExtendedRequest, IUser } from '../interfaces';
+import type { IUser } from '../interfaces';
 
-export const authVerification = (req: IExtendedRequest, res: Response, next: NextFunction) => {
+export const authVerification = (req: Request, res: Response, next: NextFunction) => {
   const token = req.session?.jwt;
 
   if (!token) {
@@ -25,4 +25,3 @@ export const authVerification = (req: IExtendedRequest, res: Response, next: Nex
 
   next();
 };
-

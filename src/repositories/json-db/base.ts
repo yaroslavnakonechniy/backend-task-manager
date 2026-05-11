@@ -58,6 +58,10 @@ export abstract class JsonServerRepository implements IRepository {
     return this.db.delete(`/${this.resource}/${id}`);
   }
 
+  public async deleteByQuery(query: Record<string, string>): Promise<void> {
+    // Implementation for deleting multiple records
+  }
+
   async findCursor<T>(
     query: Record<string, unknown>,
     callback: (doc: T) => Promise<void> | void
