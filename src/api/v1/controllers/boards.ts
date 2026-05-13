@@ -15,18 +15,6 @@ export class BoardController {
     this.boardService = boardService;
   }
 
-/*   public async getBoardTasks(req: IExtendedRequest, res: Response, next: NextFunction) {
-    try {
-      const tasks = await this.boardService.getBoardTasks(req);
-
-      res.status(StatusCodes.SUCCESS).json({ data: tasks });
-    } catch (error) {
-      req?.log?.error(`Failed to fetch tasks for board with id ${req.params.boardId}`, { error });
-
-      next(error);
-    }
-  } */
-
   public async streamBoardTasks(req: IExtendedRequest, res: Response, next: NextFunction) {
     try {
       const { boardId } = req.params;
