@@ -66,7 +66,6 @@ export class AuthController {
   }
 
   async signOut(req: IExtendedRequest, res: Response) {
-    // Implement sign out logic if needed (e.g., invalidate tokens, clear cookies)
     req.session = null;
 
     res.status(StatusCodes.SUCCESS).json({

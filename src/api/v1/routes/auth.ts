@@ -2,7 +2,7 @@ import { Router } from 'express';
 import { body } from 'express-validator';
 
 import { authVerification } from '../../../middlewares';
-import { AuthRepository } from '../../../repositories/mongo-db';
+import { AuthRepository } from '../../../repositories/mongoose';
 import { AuthService } from '../../../services';
 import { AuthController } from '../controllers/auth';
 
@@ -13,7 +13,6 @@ export const createAuthRouter = (): Router => {
   const service = new AuthService({ repository });
   const controller = new AuthController({ authService: service });
 
-  // Protected route to get current user data
   router.get('/me', authVerification, controller.getMe.bind(controller));
 
   router.post(

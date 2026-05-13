@@ -1,7 +1,7 @@
 import { Router } from 'express';
 import { body } from 'express-validator';
 
-import { BoardRepository, TaskRepository } from '../../../repositories//mongo-db';
+import { BoardRepository, TaskRepository } from '../../../repositories/mongoose';
 import { BoardService } from '../../../services';
 import { BoardController } from '../controllers';
 
@@ -17,7 +17,6 @@ export const createBoardRouter = (): Router => {
 
   router.get('/', controller.getBoards.bind(controller));
 
-  //router.get('/:boardId/tasks', controller.getBoardTasks.bind(controller));
   router.get('/:boardId/tasks', controller.streamBoardTasks.bind(controller));
 
   router.get('/:boardId', controller.getBoardById.bind(controller));

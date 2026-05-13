@@ -75,13 +75,10 @@ export abstract class MongooseRepository<M extends { id: string }> implements IR
     query: QueryFilter<M>,
     callback: (doc: T) => Promise<void> | void
   ): Promise<void> {
-    const cursor = this.model
-      .find(query)
-      .lean<M>()
-      .cursor();
+    const cursor = this.model.find(query).cursor();
 
     for await (const doc of cursor) {
-      await callback(doc as T);
+      await callback(doc.toObject() as T);
     }
   }
 

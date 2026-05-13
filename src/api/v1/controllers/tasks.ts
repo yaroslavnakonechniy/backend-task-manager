@@ -13,20 +13,6 @@ export class TaskController {
     this.taskService = taskService;
   }
 
-  // Implement controller methods for handling task-related requests here
-
-/*   public async getAllTasks(req: IExtendedRequest, res: Response, next: NextFunction) {
-    try {
-      const tasks = await this.taskService.getAllTasks(req);
-
-      res.status(StatusCodes.SUCCESS).json({ data: tasks });
-    } catch (error) {
-      req?.log?.error(`Failed to fetch tasks`, { error });
-
-      next(error);
-    }
-  } */
-
   public async streamTasks(req: IExtendedRequest, res: Response, next: NextFunction) {
     try {
       const { boardId } = req.query;
@@ -34,7 +20,6 @@ export class TaskController {
       res.setHeader('Content-Type', 'application/x-ndjson');
       res.setHeader('Transfer-Encoding', 'chunked');
 
-      // Викликаємо метод сервісу (ми його створимо нижче)
       await this.taskService.streamTasks(req, (task) => {
         res.write(JSON.stringify(task) + '\n');
       }, boardId as string);
