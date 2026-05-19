@@ -5,6 +5,7 @@ declare global {
     interface Request {
       log?: any;
       session: CookieSessionInterfaces.CookieSessionObject | null;
+      user?: User;
     }
     interface User {
       id: string;
